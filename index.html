@@ -1,0 +1,66 @@
+<html>
+
+<head>
+    <title>Assincronicidade</title>
+</head>
+
+</html>
+
+<body>
+    <div align="center">
+        <button onclick="juntarPoderesPorAsyncAwait()">Invocar o Capitão Planeta!</button>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        var invocarCapitaoPlaneta = poderes => {
+            if (poderes.length === 5) {
+                console.log(poderes)
+                console.log("Pela união dos seus poderes eu sou o Capitão Planeta!")
+                console.log("Vai planetaaaa!")
+            } else {
+                console.log("O planeta foi destruido!")
+            }
+        }
+
+        var juntarPoderesPorCallback = () => {
+            var poderes = []
+            $.get('json/terra.json', (resposta) => {
+                poderes.push(resposta.elemento)
+                $.get('json/fogo.json', (resposta) => {
+                    poderes.push(resposta.elemento)
+                    $.get('json/vento.json', (resposta) => {
+                        poderes.push(resposta.elemento)
+                        $.get('json/agua.json', (resposta) => {
+                            poderes.push(resposta.elemento)
+                            $.get('json/coracao.json', (resposta) => {
+                                poderes.push(resposta.elemento)
+                                invocarCapitaoPlaneta(poderes)
+                            })
+                        })
+                    })
+                })
+            })
+        }
+
+        var juntarPoderesPorPromise = () => {
+            var poderes = []
+            $.when(
+                $.get('json/terra.json').then(resposta => poderes.push(resposta.elemento)),
+                $.get('json/fogo.json').then(resposta => poderes.push(resposta.elemento)),
+                $.get('json/vento.json').then(resposta => poderes.push(resposta.elemento)),
+                $.get('json/agua.json').then(resposta => poderes.push(resposta.elemento)),
+                $.get('json/coracao.json').then(resposta => poderes.push(resposta.elemento)),
+            ).done(() => invocarCapitaoPlaneta(poderes))
+        }
+
+        var juntarPoderesPorAsyncAwait = async () => {
+            var poderes = []
+            poderes.push((await $.get('json/terra.json')).elemento)
+            poderes.push((await $.get('json/fogo.json')).elemento)
+            poderes.push((await $.get('json/vento.json')).elemento)
+            poderes.push((await $.get('json/agua.json')).elemento)
+            poderes.push((await $.get('json/coracao.json')).elemento)
+            invocarCapitaoPlaneta(poderes)
+        }
+    </script>
+</body>
